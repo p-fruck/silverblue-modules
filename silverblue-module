@@ -91,7 +91,10 @@ load_module()
     podman run --name ${MODULE_NAME} -e "MODULE_VERSION=${MODULE_VERSION}" \
     -e "KERNEL_VERSION=${KERNEL_VERSION}" --rm --privileged \
     ${IMAGE}:${IMAGETAG} \
-    sh -c "insmod /usr/lib/modules/${KERNEL_VERSION}/extra/${MODULE_NAME}.ko exclusive_caps=1"
+    sh -c "
+      [ -f /usr/lib/modules/${KERNEL_VERSION}/extra/${MODULE_NAME}.ko.xz ] && unxz /usr/lib/modules/${KERNEL_VERSION}/extra/${MODULE_NAME}.ko.xz
+      insmod /usr/lib/modules/${KERNEL_VERSION}/extra/${MODULE_NAME}.ko exclusive_caps=1
+    "
   fi
 }
 
